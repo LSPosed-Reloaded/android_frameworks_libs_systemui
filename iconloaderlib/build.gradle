@@ -4,6 +4,7 @@ plugins {
 
 android {
     namespace = "com.android.launcher3.icons"
+    compileSdk = 34
     sourceSets {
         main {
             java.srcDirs = ['src', 'src_full_lib']
@@ -14,6 +15,10 @@ android {
     lint {
         abortOnError false
     }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
 
     tasks.withType(JavaCompile) {
         options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
@@ -21,5 +26,5 @@ android {
 }
 
 dependencies {
-    implementation "androidx.core:core"
+    implementation "androidx.core:core:1.13.1"
 }
