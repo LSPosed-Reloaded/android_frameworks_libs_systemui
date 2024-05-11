@@ -30,6 +30,7 @@ import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.UserHandle;
 import android.os.UserManager;
+import android.util.Log;
 import android.util.SparseLongArray;
 
 import androidx.annotation.NonNull;
@@ -42,6 +43,7 @@ import com.android.launcher3.icons.cache.BaseIconCache;
  */
 @TargetApi(Build.VERSION_CODES.P)
 public class SimpleIconCache extends BaseIconCache {
+    private static final String TAG = "SimpleIconCache";
 
     private static SimpleIconCache sIconCache = null;
     private static final Object CACHE_LOCK = new Object();
@@ -67,13 +69,20 @@ public class SimpleIconCache extends BaseIconCache {
 
     @Override
     protected long getSerialNumberForUser(@NonNull UserHandle user) {
+        int identifier;
+        try {
+            identifier = (int) user.getClass().getMethod("getIdentifier").invoke(user);
+        } catch (Exception e) {
+            Log.d(TAG, "getSerialNumberForUser: failed to get identifier", e);
+            identifier = 0;
+        }
         synchronized (mUserSerialMap) {
-            int index = mUserSerialMap.indexOfKey(user.getIdentifier());
+            int index = mUserSerialMap.indexOfKey(identifier);
             if (index >= 0) {
                 return mUserSerialMap.valueAt(index);
             }
             long serial = mUserManager.getSerialNumberForUser(user);
-            mUserSerialMap.put(user.getIdentifier(), serial);
+            mUserSerialMap.put(identifier, serial);
             return serial;
         }
     }
@@ -86,7 +95,12 @@ public class SimpleIconCache extends BaseIconCache {
 
     @Override
     protected boolean isInstantApp(@NonNull ApplicationInfo info) {
-        return info.isInstantApp();
+        try {
+            return (boolean) info.getClass().getMethod("isInstantApp").invoke(info);
+        } catch (Exception e) {
+            Log.d(TAG, "isInstantApp: failed to get isInstantApp", e);
+            return false;
+        }
     }
 
     @NonNull

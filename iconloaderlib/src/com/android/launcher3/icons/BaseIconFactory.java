@@ -108,7 +108,7 @@ public class BaseIconFactory implements AutoCloseable {
 
     private static int PLACEHOLDER_BACKGROUND_COLOR = Color.rgb(245, 245, 245);
 
-    protected BaseIconFactory(Context context, int fillResIconDpi, int iconBitmapSize,
+    public BaseIconFactory(Context context, int fillResIconDpi, int iconBitmapSize,
             boolean shapeDetection) {
         mContext = context.getApplicationContext();
         mShapeDetection = shapeDetection;
